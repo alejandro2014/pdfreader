@@ -1,20 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef struct {
-    int size;
-    unsigned char *content;
-} PDFFile;
-
-PDFFile *openPdf(char *filePath);
-void closePdf(PDFFile *pdf);
-long int getFileSize(FILE *file);
+#include "pdfreader.h"
 
 int main() {
     PDFFile *pdf = openPdf("doc/reserva.pdf");
+    printPdf(pdf);
     closePdf(pdf);
     return 0;
+}
+
+void printPdf(PDFFile *pdf) {
+    printf("%s", pdf->content);
 }
 
 PDFFile *openPdf(char *filePath) {
@@ -27,8 +21,9 @@ PDFFile *openPdf(char *filePath) {
 
     PDFFile *pdf = (PDFFile *) malloc(sizeof(PDFFile));
     pdf->size = getFileSize(file);
-    pdf->content = (unsigned char *) malloc(pdf->size * sizeof(unsigned char));
-    memcpy(pdf->content, file, pdf->size);
+    pdf->content = (char *) malloc(pdf->size * sizeof(char));
+    fread(pdf->content, sizeof(char), pdf->size, file);
+    //memcpy(pdf->content, file, pdf->size);
     fclose(file);
 
 	return pdf;
